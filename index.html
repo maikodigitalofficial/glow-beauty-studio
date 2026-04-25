@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Glow Beauty Studio - Premium hair, nails, and makeup services. Book your transformation today.">
+    <title>Glow Beauty Studio | Luxury Hair, Nails & Makeup</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'void': '#050505',
+                        'coal': '#0c0c0c',
+                        'ink': '#141414',
+                        'graphite': '#1e1e1e',
+                        'fog': '#a3a3a3',
+                        'bone': '#d4d4d4',
+                        'chalk': '#e8e8e8',
+                        'amber': {
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#d4a843',
+                            600: '#b8923a',
+                            700: '#967530',
+                        },
+                    },
+                    fontFamily: {
+                        serif: ['"Instrument Serif"', 'Georgia', 'serif'],
+                        sans: ['"Space Grotesk"', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* ===== RESET ===== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: #050505;
+            color: #e8e8e8;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        :focus-visible { outline: 2px solid #d4a843; outline-offset: 3px; border-radius: 2px; }
+
+        .skip-link {
+            position: absolute; top: -100%; left: 50%; transform: translateX(-50%);
+            background: #d4a843; color: #050505; padding: 12px 24px; z-index: 99999;
+            font-weight: 600; text-decoration: none; border-radius: 0 0 8px 8px;
+            transition: top 0.3s ease; font-size: 13px;
+        }
+        .skip-link:focus { top: 0; }
+
+        /* ===== LOADER ===== */
+        .loader {
+            position: fixed; inset: 0; z-index: 99999; background: #050505;
+            display: flex; align-items: center; justify-content: center;
+            transition: opacity 0.6s ease, visibility 0.6s;
+        }
+        .loader.done { opacity: 0; visibility: hidden; pointer-events: none; }
+        .loader-inner {
+            display: flex; flex-direction: column; align-items: center; gap: 20px;
+        }
+        .loader-bar {
+            width: 2px; height: 0; background: #d4a843;
+            animation: loaderGrow 1s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+        }
+        @keyframes loaderGrow { to { height: 60px; } }
+        .loader-text {
+            font-family: 'Instrument Serif', serif; font-size: 13px;
+            letter-spacing: 0.5em; color: #d4a843; opacity: 0;
+            animation: loaderFade 0.5s ease 0.6s forwards;
+        }
+        @keyframes loaderFade { to { opacity: 1; } }
+
+        /* ===== NAVIGATION ===== */
+        .nav-main {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            background: rgba(5, 5, 5, 0.85);
+            backdrop-filter: blur(24px) saturate(1.2);
+            -webkit-backdrop-filter: blur(24px) saturate(1.2);
+            border-bottom: 1px solid rgba(212, 168, 67, 0.06);
+        }
+        .nav-main.scrolled {
+            background: rgba(5, 5, 5, 0.95);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+        }
+        .nav-main.hidden-nav { transform: translateY(-100%); }
+
+        .nav-link {
+            position: relative; font-size: 13px; font-weight: 500;
+            letter-spacing: 0.05em; color: rgba(232, 232, 232, 1);
+            transition: color 0.3s ease; text-transform: uppercase;
+        }
+        .nav-link:hover { color: #ffffff; }
+        .nav-link::after {
+            content: ''; position: absolute; bottom: -4px; left: 0;
+            width: 0; height: 1px; background: #d4a843;
+            transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .nav-link:hover::after { width: 100%; }
+
+        .nav-cta {
+            position: relative; overflow: hidden;
+            padding: 12px 28px; border: 1px solid rgba(212, 168, 67, 0.3);
+            border-radius: 0; font-size: 12px; font-weight: 600;
+            letter-spacing: 0.15em; text-transform: uppercase;
+            color: #d4a843; transition: all 0.4s ease;
+        }
+        .nav-cta::before {
+            content: ''; position: absolute; inset: 0; background: #d4a843;
+            transform: translateX(-101%); transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .nav-cta:hover::before { transform: translateX(0); }
+        .nav-cta span { position: relative; z-index: 1; transition: color 0.4s ease; }
+        .nav-cta:hover span { color: #050505; }
+
+        /* ===== HERO: SPLIT SCREEN ===== */
+        .hero-split {
+            min-height: 100dvh; display: grid;
+            grid-template-columns: 1fr;
+        }
+        @media (min-width: 1024px) {
+            .hero-split { grid-template-columns: 45% 55%; }
+        }
+
+        .hero-left {
+            display: flex; flex-direction: column; justify-content: center;
+            padding: 140px 32px 80px; position: relative; z-index: 10;
+            background: #050505;
+        }
+        @media (min-width: 1024px) {
+            .hero-left { padding: 0 64px 0 80px; }
+        }
+
+        .hero-right {
+            position: relative; min-height: 50vh;
+            background: #0c0c0c; overflow: hidden;
+        }
+        @media (min-width: 1024px) {
+            .hero-right { min-height: auto; }
+        }
+
+        .hero-image-main {
+            width: 100%; height: 100%; object-fit: cover;
+            filter: contrast(1.05) brightness(0.9);
+        }
+
+        .hero-image-secondary {
+            position: absolute; bottom: -40px; left: -60px;
+            width: 220px; height: 280px; object-fit: cover;
+            border: 8px solid #050505; z-index: 20;
+            display: none;
+        }
+        @media (min-width: 1024px) {
+            .hero-image-secondary { display: block; }
+        }
+
+        .hero-eyebrow {
+            font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase;
+            color: #d4a843; font-weight: 600; margin-bottom: 24px;
+            display: flex; align-items: center; gap: 16px;
+        }
+        .hero-eyebrow::before {
+            content: ''; display: block; width: 40px; height: 1px; background: #d4a843;
+        }
+
+        .hero-title {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(3rem, 8vw, 6.5rem);
+            line-height: 0.95; letter-spacing: -0.03em;
+            color: #ffffff; margin-bottom: 32px;
+        }
+        .hero-title em {
+            font-style: italic; color: #d4a843;
+            display: block; margin-top: 8px;
+        }
+
+        .hero-body {
+            font-size: 16px; line-height: 1.7;
+            color: rgba(232, 232, 232, 0.95); max-width: 440px;
+            margin-bottom: 48px;
+        }
+
+        .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+
+        .btn-primary {
+            padding: 16px 36px; background: #d4a843; color: #050505;
+            font-size: 12px; font-weight: 700; letter-spacing: 0.15em;
+            text-transform: uppercase; border: none; cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .btn-primary:hover {
+            background: #e8e8e8; transform: translateY(-2px);
+            box-shadow: 0 20px 40px -10px rgba(212, 168, 67, 0.3);
+        }
+
+        .btn-secondary {
+            padding: 16px 36px; background: transparent;
+            color: #e8e8e8; font-size: 12px; font-weight: 600;
+            letter-spacing: 0.15em; text-transform: uppercase;
+            border: 1px solid rgba(232, 232, 232, 0.3);
+            cursor: pointer; transition: all 0.4s ease;
+        }
+        .btn-secondary:hover {
+            border-color: #d4a843; color: #d4a843;
+        }
+
+        .hero-meta {
+            margin-top: 80px; display: flex; gap: 48px;
+            padding-top: 32px; border-top: 1px solid rgba(232, 232, 232, 0.06);
+        }
+        .hero-meta-item h4 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 32px; color: #d4a843; line-height: 1;
+        }
+        .hero-meta-item p {
+            font-size: 11px; color: rgba(232, 232, 232, 0.85);
+            text-transform: uppercase; letter-spacing: 0.15em; margin-top: 8px;
+        }
+
+        /* Decorative corner */
+        .corner-accent {
+            position: absolute; top: 0; right: 0; width: 120px; height: 120px;
+            border-right: 1px solid rgba(212, 168, 67, 0.15);
+            border-top: 1px solid rgba(212, 168, 67, 0.15);
+            pointer-events: none;
+        }
+
+        /* ===== MARQUEE ===== */
+        .marquee-strip {
+            background: #0c0c0c; border-top: 1px solid rgba(232, 232, 232, 0.04);
+            border-bottom: 1px solid rgba(232, 232, 232, 0.04);
+            padding: 20px 0; overflow: hidden; white-space: nowrap;
+        }
+        .marquee-content {
+            display: inline-flex; gap: 48px;
+            animation: marqueeScroll 25s linear infinite;
+        }
+        @keyframes marqueeScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .marquee-item {
+            font-family: 'Instrument Serif', serif; font-size: 14px;
+            color: rgba(232, 232, 232, 0.5); letter-spacing: 0.1em;
+            text-transform: uppercase; display: flex; align-items: center; gap: 48px;
+        }
+        .marquee-item::after {
+            content: ''; display: block; width: 6px; height: 6px;
+            background: #d4a843; border-radius: 50%; opacity: 0.4;
+        }
+
+        /* ===== SECTIONS ===== */
+        .section-label {
+            font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase;
+            color: #d4a843; font-weight: 600;
+        }
+        .section-title {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            line-height: 1; letter-spacing: -0.02em; color: #ffffff;
+        }
+
+        /* ===== SERVICE CARDS ===== */
+        .service-card {
+            background: #0c0c0c; border: 1px solid rgba(232, 232, 232, 0.04);
+            position: relative; overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .service-card:hover {
+            border-color: rgba(212, 168, 67, 0.15);
+            transform: translateY(-4px);
+        }
+        .service-card .card-img {
+            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease;
+            filter: grayscale(30%) brightness(0.85);
+        }
+        .service-card:hover .card-img {
+            transform: scale(1.05); filter: grayscale(0%) brightness(1);
+        }
+        .service-number {
+            position: absolute; top: 24px; right: 24px;
+            font-family: 'Instrument Serif', serif; font-size: 48px;
+            color: rgba(212, 168, 67, 0.1); line-height: 1; z-index: 10;
+        }
+
+        /* ===== GALLERY: MASONRY HORIZONTAL STRIPS ===== */
+        .gallery-strips {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .gallery-strip {
+            display: grid;
+            gap: 4px;
+        }
+        .gallery-strip-1 {
+            grid-template-columns: 1fr;
+            height: auto;
+        }
+        @media (min-width: 768px) {
+            .gallery-strip-1 {
+                grid-template-columns: 2fr 1fr;
+                height: 400px;
+            }
+        }
+        .gallery-strip-2 {
+            grid-template-columns: 1fr 1fr;
+            height: auto;
+        }
+        @media (min-width: 768px) {
+            .gallery-strip-2 {
+                grid-template-columns: 1fr 1fr 1fr;
+                height: 280px;
+            }
+        }
+        .gallery-strip-3 {
+            grid-template-columns: 1fr;
+            height: auto;
+        }
+        @media (min-width: 768px) {
+            .gallery-strip-3 {
+                grid-template-columns: 1fr 2fr;
+                height: 350px;
+            }
+        }
+        .gallery-cell {
+            position: relative; overflow: hidden;
+            background: #0c0c0c; min-height: 250px;
+        }
+        @media (min-width: 768px) {
+            .gallery-cell { min-height: auto; }
+        }
+        .gallery-cell img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease;
+            filter: grayscale(20%) contrast(1.1) brightness(0.8);
+        }
+        .gallery-cell:hover img {
+            transform: scale(1.03); filter: grayscale(0%) contrast(1) brightness(0.95);
+        }
+        .gallery-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(5,5,5,0.9) 0%, transparent 60%);
+            opacity: 0; transition: opacity 0.5s ease;
+        }
+        .gallery-cell:hover .gallery-overlay { opacity: 1; }
+        .gallery-caption {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 32px; transform: translateY(16px);
+            opacity: 0; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .gallery-cell:hover .gallery-caption {
+            transform: translateY(0); opacity: 1;
+        }
+
+        /* ===== TESTIMONIALS ===== */
+        .testimonial-quote {
+            font-family: 'Instrument Serif', serif; font-style: italic;
+            font-size: clamp(1.5rem, 3vw, 2.5rem); line-height: 1.3; color: #ffffff;
+        }
+
+        /* ===== FORM ===== */
+        .form-field {
+            background: rgba(232, 232, 232, 0.03);
+            border: 1px solid rgba(232, 232, 232, 0.06);
+            padding: 16px 20px; color: #ffffff; font-size: 15px;
+            width: 100%; transition: all 0.3s ease; border-radius: 0;
+            appearance: none; -webkit-appearance: none;
+        }
+        .form-field:focus {
+            outline: none; border-color: #d4a843;
+            background: rgba(232, 232, 232, 0.05);
+            box-shadow: 0 0 0 3px rgba(212, 168, 67, 0.08);
+        }
+        .form-field::placeholder { color: rgba(232, 232, 232, 0.5); }
+
+        /* CUSTOM SELECT STYLING */
+        .select-wrapper { position: relative; }
+        .select-wrapper::after {
+            content: '\f078'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+            position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
+            color: #d4a843; font-size: 10px; pointer-events: none;
+        }
+        select.form-field {
+            cursor: pointer; padding-right: 48px;
+        }
+        select.form-field option {
+            background: #141414; color: #ffffff;
+            padding: 12px;
+        }
+        /* Firefox fix */
+        select.form-field:-moz-focusring { color: transparent; text-shadow: 0 0 0 #ffffff; }
+
+        .form-label {
+            display: block; font-size: 11px; font-weight: 600;
+            letter-spacing: 0.15em; text-transform: uppercase;
+            color: rgba(232, 232, 232, 0.85); margin-bottom: 10px;
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #d4a843; }
+
+        /* ===== MOBILE MENU ===== */
+        .mobile-overlay {
+            position: fixed; inset: 0; background: rgba(5, 5, 5, 0.98);
+            z-index: 40; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; gap: 32px;
+            opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
+        }
+        .mobile-overlay.open { opacity: 1; pointer-events: auto; }
+
+        .hamburger span {
+            display: block; width: 24px; height: 1.5px;
+            background: #e8e8e8; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .hamburger.active span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+        .hamburger.active span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+        .hamburger.active span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+        /* ===== REVEAL ===== */
+        .reveal-up {
+            opacity: 0; transform: translateY(50px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-up.active { opacity: 1; transform: translateY(0); }
+
+        /* ===== CURSOR ===== */
+        @media (pointer: fine) {
+            .cursor-dot {
+                position: fixed; width: 8px; height: 8px;
+                background: #d4a843; border-radius: 50%;
+                pointer-events: none; z-index: 99999;
+                transform: translate(-50%, -50%); mix-blend-mode: difference;
+                transition: width 0.3s, height 0.3s;
+            }
+            .cursor-dot.expanded { width: 48px; height: 48px; opacity: 0.15; }
+        }
+
+        /* ===== RESPONSIVE UTILITIES ===== */
+        @media (max-width: 640px) {
+            .hero-title { font-size: 2.8rem !important; }
+            .hero-body { color: rgba(232, 232, 232, 1) !important; }
+            .hero-meta { gap: 24px !important; }
+            .hero-meta-item h4 { font-size: 24px !important; }
+            .section-title { font-size: 2.2rem !important; }
+        }
+        @media (max-width: 768px) {
+            .gallery-strip-1,
+            .gallery-strip-2,
+            .gallery-strip-3 { height: auto !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="#main" class="skip-link">Skip to content</a>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot hidden lg:block" id="cursor"></div>
+
+    <!-- Loader -->
+    <div class="loader" role="status" aria-live="polite">
+        <div class="loader-inner">
+            <div class="loader-bar"></div>
+            <span class="loader-text">GLOW</span>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav-main" id="navbar" role="navigation" aria-label="Main">
+        <div class="max-w-[1400px] mx-auto px-6 lg:px-10">
+            <div class="flex items-center justify-between h-20 lg:h-24">
+                <a href="#" class="flex items-center gap-3" aria-label="Glow Beauty Studio Home">
+                    <div class="w-9 h-9 border border-amber-500/30 flex items-center justify-center">
+                        <span class="font-serif text-amber-500 text-lg">G</span>
+                    </div>
+                    <div class="hidden sm:block">
+                        <span class="font-serif text-lg text-chalk tracking-wide block leading-none">Glow</span>
+                        <span class="text-[9px] uppercase tracking-[0.3em] text-fog/60 block leading-none mt-1">Beauty Studio</span>
+                    </div>
+                </a>
+
+                <div class="hidden lg:flex items-center gap-10">
+                    <a href="#home" class="nav-link">Home</a>
+                    <a href="#services" class="nav-link">Services</a>
+                    <a href="#gallery" class="nav-link">Gallery</a>
+                    <a href="#stories" class="nav-link">Stories</a>
+                    <a href="#booking" class="nav-cta"><span>Book Now</span></a>
+                </div>
+
+                <button class="hamburger lg:hidden flex flex-col gap-[6px] z-50" id="menu-btn" aria-label="Toggle menu" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-overlay" id="mobile-menu">
+        <a href="#home" class="mobile-link font-serif text-4xl text-chalk hover:text-amber-500 transition-colors">Home</a>
+        <a href="#services" class="mobile-link font-serif text-4xl text-chalk hover:text-amber-500 transition-colors">Services</a>
+        <a href="#gallery" class="mobile-link font-serif text-4xl text-chalk hover:text-amber-500 transition-colors">Gallery</a>
+        <a href="#stories" class="mobile-link font-serif text-4xl text-chalk hover:text-amber-500 transition-colors">Stories</a>
+        <a href="#booking" class="mt-6 px-10 py-4 bg-amber-500 text-void font-bold uppercase tracking-widest text-xs">Book Now</a>
+    </div>
+
+    <main id="main">
+        <!-- HERO: SPLIT LAYOUT -->
+        <header id="home" class="hero-split">
+            <!-- Left: Content -->
+            <div class="hero-left">
+                <div class="corner-accent"></div>
+
+                <div class="hero-eyebrow" id="hero-label">Est. 2024 — New York</div>
+
+                <h1 class="hero-title" id="hero-title">
+                    Where Art<br>Meets <em>Beauty</em>
+                </h1>
+
+                <p class="hero-body" id="hero-desc">
+                    Step into a sanctuary where precision meets passion. Our master stylists craft looks that don't just follow trends—they define them.
+                </p>
+
+                <div class="hero-actions" id="hero-cta">
+                    <a href="#booking" class="btn-primary">Reserve Your Visit</a>
+                    <a href="#services" class="btn-secondary">View Services</a>
+                </div>
+
+                <div class="hero-meta" id="hero-meta">
+                    <div class="hero-meta-item">
+                        <h4 class="counter" data-target="12" data-suffix="+">0</h4>
+                        <p>Years Experience</p>
+                    </div>
+                    <div class="hero-meta-item">
+                        <h4 class="counter" data-target="5000" data-suffix="+" data-prefix="">0</h4>
+                        <p>Happy Clients</p>
+                    </div>
+                    <div class="hero-meta-item">
+                        <h4 class="counter" data-target="100" data-suffix="%">0</h4>
+                        <p>Premium Care</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Visual -->
+            <div class="hero-right">
+                <img src="https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?q=80&w=2536&auto=format&fit=crop"
+                     alt="Luxury salon styling session with professional tools and ambient lighting"
+                     class="hero-image-main" id="hero-img">
+
+                <img src="https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?q=80&w=2600&auto=format&fit=crop"
+                     alt="Close-up of professional hair styling technique"
+                     class="hero-image-secondary">
+
+                <!-- Decorative elements -->
+                <div class="absolute top-8 right-8 text-[10px] uppercase tracking-[0.3em] text-chalk/40 hidden lg:block">
+                    NYC • EST. 2024
+                </div>
+            </div>
+        </header>
+
+        <!-- MARQUEE -->
+        <div class="marquee-strip" aria-hidden="true">
+            <div class="marquee-content">
+                <span class="marquee-item">Hair Artistry</span>
+                <span class="marquee-item">Nail Couture</span>
+                <span class="marquee-item">Makeup Studio</span>
+                <span class="marquee-item">Bridal Glam</span>
+                <span class="marquee-item">Color Mastery</span>
+                <span class="marquee-item">Precision Cuts</span>
+                <span class="marquee-item">Hair Artistry</span>
+                <span class="marquee-item">Nail Couture</span>
+                <span class="marquee-item">Makeup Studio</span>
+                <span class="marquee-item">Bridal Glam</span>
+                <span class="marquee-item">Color Mastery</span>
+                <span class="marquee-item">Precision Cuts</span>
+            </div>
+        </div>
+
+        <!-- PHILOSOPHY -->
+        <section class="py-24 lg:py-40 bg-void relative" aria-labelledby="philosophy-heading">
+            <div class="max-w-[1400px] mx-auto px-6 lg:px-10">
+                <div class="grid lg:grid-cols-12 gap-16 items-center">
+                    <div class="lg:col-span-5 reveal-up">
+                        <div class="relative">
+                            <div class="aspect-[4/5] overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=2574&auto=format&fit=crop"
+                                     alt="Elegant salon interior with warm ambient lighting"
+                                     class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000"
+                                     loading="lazy">
+                            </div>
+                            <div class="absolute -bottom-6 -right-6 bg-ink border border-chalk/5 p-6 hidden lg:block">
+                                <p class="font-serif text-3xl text-amber-500">Award Winning</p>
+                                <p class="text-[10px] uppercase tracking-[0.2em] text-fog/60 mt-1">Best Salon NYC 2024</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-6 lg:col-start-7 reveal-up">
+                        <span class="section-label mb-6 block">Our Philosophy</span>
+                        <h2 id="philosophy-heading" class="section-title mb-8">
+                            Redefining<br><em class="text-amber-500">Elegance</em>
+                        </h2>
+                        <div class="space-y-6 text-fog/80 text-base leading-relaxed">
+                            <p>At Glow Beauty Studio, we believe beauty is not about changing who you are—it's about revealing who you've always been. Our sanctuary is designed to be your escape from the noise of the everyday.</p>
+                            <p>Using only premium, sustainable products, our master artists blend contemporary trends with timeless techniques to create a look that is uniquely yours.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SERVICES -->
+        <section id="services" class="py-24 lg:py-40 bg-coal" aria-labelledby="services-heading">
+            <div class="max-w-[1400px] mx-auto px-6 lg:px-10">
+                <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between mb-16 lg:mb-24 reveal-up">
+                    <div>
+                        <span class="section-label mb-6 block">What We Offer</span>
+                        <h2 id="services-heading" class="section-title">Signature Services</h2>
+                    </div>
+                    <p class="text-fog/60 mt-6 lg:mt-0 max-w-md text-sm leading-relaxed">
+                        Each service is tailored to your unique features, lifestyle, and desires.
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6 lg:gap-8">
+                    <!-- Hair -->
+                    <article class="service-card reveal-up">
+                        <div class="aspect-[4/3] overflow-hidden relative">
+                            <span class="service-number">01</span>
+                            <img src="https://images.unsplash.com/photo-1562322140-8baeececf3df?q=80&w=2669&auto=format&fit=crop"
+                                 alt="Professional hair styling and coloring service"
+                                 class="card-img w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <div class="p-8 lg:p-10">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-serif text-2xl text-chalk">Hair Artistry</h3>
+                                <span class="font-serif text-xl text-amber-500">$85+</span>
+                            </div>
+                            <p class="text-fog/70 text-sm leading-relaxed mb-6">
+                                Precision cuts, balayage masterpieces, and rejuvenating treatments. Your hair is the crown you never take off.
+                            </p>
+                            <ul class="space-y-2 mb-8 text-sm text-fog/50">
+                                <li class="flex items-center gap-3"><span class="w-1 h-1 bg-amber-500/50"></span>Cut & Style</li>
+                                <li class="flex items-center gap-3"><span class="w-1 h-1 bg-amber-500/50"></span>Color & Highlights</li>
+                                <li class="flex items-center gap-3"><span class="w-1 h-1 bg-amber-500/50"></span>Keratin Treatments</li>
+                            </ul>
+                            <a href="#booking" class="text-xs uppercase tracking-[0.2em] text-amber-500 hover:text-amber-400 transition-colors flex items-center gap-2 group">
+                                Book Now <i class="fas fa-arrow-right transition-transform group-hover:translate-x-1"></i>
+                            </a>
+                        </div>
+                    </article>
+
+                    <!-- Nails -->
+                    <article class="service-card reveal-up" style="transition-delay: 0.1s">
+                        <div class="aspect-[4/3] overflow-hidden relative">
+                            <span class="service-number">02</span>
+                            <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?q=80&w=2574&auto=format&fit=crop"
+                                 alt="Luxury nail art and manicure service"
+                                 class="card-img w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <div class="p-8 lg:p-10">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-serif text-2xl text-chalk">Nail Couture</h3>
+                                <span class="font-serif text-xl text-amber-500">$45+</span>
+                            </div>
+                            <p class="text-fog/70 text-sm leading-relaxed mb-6">
+                                Impeccable manicures and pedicures using premium gels. Detailed nail art for the modern muse.
+                            </p>
+                            <ul class="space-y-2 mb-8 text-sm text-fog/50">
+                                <li class="flex items-center gap-3"><span class="w-1 h-1 bg-amber-500/50"></span>Gel Manicure</li>
+                                <li class="flex items-center gap-3"><span class="w-1 h-1 bg-amber-500/50"></span>Acrylic Extensions</li>
+                                <li class="flex items-center gap-3"><span class="w-1 h-1 bg-amber-500/50"></span>Spa Pedicure</li>
+                            </ul>
+                            <a href="#booking" class="text-xs uppercase tracking-[0.2em] text-amber-500 hover:text-amber-400 transition-colors flex items-center gap-2 group">
+                                Book Now <i class="fas fa-arrow-right transition-transform group-hover:translate-x-1"></i>
+                            </a>
+                        </div>
+                    </article>
+
+                    <!-- Makeup -->
+                    <article class="service-card reveal-up" style="transition-delay: 0.2s">
+                        <div class="aspect-[4/3] overflow-hidden relative">
+                            <span class="service-number">03</span>
+                            <img src="https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?q=80&w=2670&auto=format&fit=crop"
+                                 alt="Professional makeup application service"
+                                 class="card-img w-full h-full object-cover" loading="lazy">
+                        </div>
+                        <div class="p-8 lg:p-10">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-serif text-2xl text-chalk">Makeup Studio</h3>
+                                <span class="font-serif text-xl text-amber-500">$120+</span>
+                            </div>
+                            <p class="text-fog/70 text-sm leading-relaxed mb-6">
+                                Bridal glam, editorial looks, or everyday fresh face. We enhance your features to reflect your inner light.
+                            </p>
+                            <ul class="space-y-2 mb-8 text-sm text-fog/50">
+                                <li class="flex items-center gap-3"><span class="w-1 h-1 bg-amber-500/50"></span>Bridal Makeup</li>
+                                <li class="flex items-center gap-3"><span class="w-1 h-1 bg-amber-500/50"></span>Event Glam</li>
+                                <li class="flex items-center gap-3"><span class="w-1 h-1 bg-amber-500/50"></span>Lessons & Consults</li>
+                            </ul>
+                            <a href="#booking" class="text-xs uppercase tracking-[0.2em] text-amber-500 hover:text-amber-400 transition-colors flex items-center gap-2 group">
+                                Book Now <i class="fas fa-arrow-right transition-transform group-hover:translate-x-1"></i>
+                            </a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- GALLERY: HORIZONTAL STRIPS LAYOUT -->
+        <section id="gallery" class="py-24 lg:py-40 bg-void" aria-labelledby="gallery-heading">
+            <div class="max-w-[1400px] mx-auto px-6 lg:px-10">
+                <div class="flex flex-col md:flex-row md:items-end md:justify-between mb-16 reveal-up">
+                    <div>
+                        <span class="section-label mb-6 block">Portfolio</span>
+                        <h2 id="gallery-heading" class="section-title">The Collection</h2>
+                    </div>
+                    <a href="#" class="mt-6 md:mt-0 text-xs uppercase tracking-[0.2em] text-fog/50 hover:text-amber-500 transition-colors flex items-center gap-2">
+                        View Instagram <i class="fas fa-arrow-up-right-from-square text-[10px]"></i>
+                    </a>
+                </div>
+
+                <div class="gallery-strips">
+                    <!-- Strip 1: 2/3 + 1/3 -->
+                    <div class="gallery-strip gallery-strip-1">
+                        <figure class="gallery-cell reveal-up">
+                            <img src="https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?q=80&w=2670&auto=format&fit=crop"
+                                 alt="Bridal makeup artistry showcase" loading="lazy">
+                            <div class="gallery-overlay"></div>
+                            <figcaption class="gallery-caption">
+                                <span class="text-[10px] uppercase tracking-[0.2em] text-amber-500 mb-1 block">Bridal</span>
+                                <span class="font-serif text-2xl text-chalk">The Perfect Day</span>
+                            </figcaption>
+                        </figure>
+                        <figure class="gallery-cell reveal-up" style="transition-delay: 0.1s">
+                            <img src="https://images.unsplash.com/photo-1633681926035-ec1ac984418a?q=80&w=2670&auto=format&fit=crop"
+                                 alt="Hair coloring balayage technique" loading="lazy">
+                            <div class="gallery-overlay"></div>
+                            <figcaption class="gallery-caption">
+                                <span class="text-[10px] uppercase tracking-[0.2em] text-amber-500 mb-1 block">Color</span>
+                                <span class="font-serif text-xl text-chalk">Balayage</span>
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <!-- Strip 2: Three equal -->
+                    <div class="gallery-strip gallery-strip-2">
+                        <figure class="gallery-cell reveal-up" style="transition-delay: 0.15s">
+                            <img src="https://images.unsplash.com/photo-1519014816548-bf5fe059798b?q=80&w=2670&auto=format&fit=crop"
+                                 alt="Artistic nail design showcase" loading="lazy">
+                            <div class="gallery-overlay"></div>
+                            <figcaption class="gallery-caption">
+                                <span class="text-[10px] uppercase tracking-[0.2em] text-amber-500 mb-1 block">Nails</span>
+                                <span class="font-serif text-lg text-chalk">Nail Art</span>
+                            </figcaption>
+                        </figure>
+                        <figure class="gallery-cell reveal-up" style="transition-delay: 0.2s">
+                            <img src="https://images.unsplash.com/photo-1487412912498-0447578fcca8?q=80&w=2670&auto=format&fit=crop"
+                                 alt="Hair styling and blowout session" loading="lazy">
+                            <div class="gallery-overlay"></div>
+                            <figcaption class="gallery-caption">
+                                <span class="text-[10px] uppercase tracking-[0.2em] text-amber-500 mb-1 block">Styling</span>
+                                <span class="font-serif text-lg text-chalk">The Blowout</span>
+                            </figcaption>
+                        </figure>
+                        <figure class="gallery-cell reveal-up hidden md:block" style="transition-delay: 0.25s">
+                            <img src="https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?q=80&w=2600&auto=format&fit=crop"
+                                 alt="Precision hair cutting technique" loading="lazy">
+                            <div class="gallery-overlay"></div>
+                            <figcaption class="gallery-caption">
+                                <span class="text-[10px] uppercase tracking-[0.2em] text-amber-500 mb-1 block">Cuts</span>
+                                <span class="font-serif text-lg text-chalk">Precision</span>
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                    <!-- Strip 3: 1/3 + 2/3 -->
+                    <div class="gallery-strip gallery-strip-3">
+                        <figure class="gallery-cell reveal-up" style="transition-delay: 0.3s">
+                            <img src="https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?q=80&w=2536&auto=format&fit=crop"
+                                 alt="Salon interior and atmosphere" loading="lazy">
+                            <div class="gallery-overlay"></div>
+                            <figcaption class="gallery-caption">
+                                <span class="text-[10px] uppercase tracking-[0.2em] text-amber-500 mb-1 block">Space</span>
+                                <span class="font-serif text-xl text-chalk">The Studio</span>
+                            </figcaption>
+                        </figure>
+                        <figure class="gallery-cell reveal-up" style="transition-delay: 0.35s">
+                            <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=2574&auto=format&fit=crop"
+                                 alt="Luxury salon experience" loading="lazy">
+                            <div class="gallery-overlay"></div>
+                            <figcaption class="gallery-caption">
+                                <span class="text-[10px] uppercase tracking-[0.2em] text-amber-500 mb-1 block">Experience</span>
+                                <span class="font-serif text-2xl text-chalk">Pure Luxury</span>
+                            </figcaption>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TESTIMONIALS -->
+        <section id="stories" class="py-24 lg:py-40 bg-coal relative overflow-hidden" aria-labelledby="stories-heading">
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-serif text-[18rem] text-chalk/[0.03] pointer-events-none select-none whitespace-nowrap" aria-hidden="true">Glow</div>
+
+            <div class="max-w-4xl mx-auto px-6 lg:px-10 text-center relative z-10">
+                <div class="reveal-up">
+                    <span class="section-label mb-6 block">Testimonials</span>
+                    <h2 id="stories-heading" class="section-title mb-20">Client Stories</h2>
+                </div>
+
+                <div class="relative min-h-[320px] reveal-up" role="region" aria-label="Testimonials carousel">
+                    <div id="testimonial-track" class="relative">
+                        <!-- Slide 1 -->
+                        <blockquote class="testimonial-slide absolute inset-0 transition-all duration-700 opacity-100 translate-x-0" data-index="0">
+                            <svg class="w-8 h-8 text-amber-500/20 mx-auto mb-10" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+                            <p class="testimonial-quote mb-12">"I walked in feeling tired, and walked out feeling like a supermodel. The attention to detail is unmatched. This isn't just a salon, it's an experience."</p>
+                            <footer class="flex items-center justify-center gap-4">
+                                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Sarah Jenkins" class="w-14 h-14 rounded-full object-cover border border-amber-500/20" loading="lazy">
+                                <div class="text-left">
+                                    <cite class="font-semibold text-chalk not-italic text-sm tracking-wide">Sarah Jenkins</cite>
+                                    <p class="text-xs text-fog/50 mt-0.5">Regular Client</p>
+                                </div>
+                            </footer>
+                        </blockquote>
+
+                        <!-- Slide 2 -->
+                        <blockquote class="testimonial-slide absolute inset-0 transition-all duration-700 opacity-0 translate-x-full" data-index="1">
+                            <svg class="w-8 h-8 text-amber-500/20 mx-auto mb-10" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+                            <p class="testimonial-quote mb-12">"The best balayage I've ever had. The colorist truly understood my skin tone and lifestyle. Glow is worth every penny."</p>
+                            <footer class="flex items-center justify-center gap-4">
+                                <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Elena Rodriguez" class="w-14 h-14 rounded-full object-cover border border-amber-500/20" loading="lazy">
+                                <div class="text-left">
+                                    <cite class="font-semibold text-chalk not-italic text-sm tracking-wide">Elena Rodriguez</cite>
+                                    <p class="text-xs text-fog/50 mt-0.5">Fashion Blogger</p>
+                                </div>
+                            </footer>
+                        </blockquote>
+
+                        <!-- Slide 3 -->
+                        <blockquote class="testimonial-slide absolute inset-0 transition-all duration-700 opacity-0 translate-x-full" data-index="2">
+                            <svg class="w-8 h-8 text-amber-500/20 mx-auto mb-10" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+                            <p class="testimonial-quote mb-12">"My wedding makeup was flawless. It lasted all day and night, through tears and dancing. Thank you for making me feel beautiful."</p>
+                            <footer class="flex items-center justify-center gap-4">
+                                <img src="https://randomuser.me/api/portraits/women/33.jpg" alt="Jessica" class="w-14 h-14 rounded-full object-cover border border-amber-500/20" loading="lazy">
+                                <div class="text-left">
+                                    <cite class="font-semibold text-chalk not-italic text-sm tracking-wide">Jessica & Mike</cite>
+                                    <p class="text-xs text-fog/50 mt-0.5">Wedding Package</p>
+                                </div>
+                            </footer>
+                        </blockquote>
+                    </div>
+
+                    <div class="flex justify-center gap-3 mt-16">
+                        <button class="testimonial-dot w-10 h-1 rounded-full bg-amber-500 transition-all duration-300" aria-label="Testimonial 1" aria-selected="true" data-index="0"></button>
+                        <button class="testimonial-dot w-10 h-1 rounded-full bg-chalk/10 hover:bg-chalk/20 transition-all duration-300" aria-label="Testimonial 2" aria-selected="false" data-index="1"></button>
+                        <button class="testimonial-dot w-10 h-1 rounded-full bg-chalk/10 hover:bg-chalk/20 transition-all duration-300" aria-label="Testimonial 3" aria-selected="false" data-index="2"></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BOOKING -->
+        <section id="booking" class="py-24 lg:py-40 bg-void" aria-labelledby="booking-heading">
+            <div class="max-w-[1400px] mx-auto px-6 lg:px-10">
+                <div class="grid lg:grid-cols-2 gap-16 lg:gap-24">
+                    <div class="reveal-up">
+                        <span class="section-label mb-6 block">Reservations</span>
+                        <h2 id="booking-heading" class="section-title mb-8">Begin Your<br><em class="text-amber-500">Transformation</em></h2>
+                        <p class="text-fog/60 text-base leading-relaxed mb-16 max-w-md">Ready to glow? Reserve your spot today. Walk-ins are welcome, but appointments ensure our undivided attention.</p>
+
+                        <div class="space-y-10">
+                            <div class="flex items-start gap-5">
+                                <div class="w-12 h-12 bg-ink border border-chalk/5 flex items-center justify-center text-amber-500"><i class="fas fa-map-marker-alt"></i></div>
+                                <div>
+                                    <h3 class="font-semibold text-chalk mb-1 text-sm">Visit Us</h3>
+                                    <p class="text-sm text-fog/50 leading-relaxed">123 Elegance Ave, Suite 400<br>New York, NY 10012</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-5">
+                                <div class="w-12 h-12 bg-ink border border-chalk/5 flex items-center justify-center text-amber-500"><i class="fas fa-phone-alt"></i></div>
+                                <div>
+                                    <h3 class="font-semibold text-chalk mb-1 text-sm">Call Us</h3>
+                                    <p class="text-sm text-fog/50">(555) 123-4567</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-5">
+                                <div class="w-12 h-12 bg-ink border border-chalk/5 flex items-center justify-center text-amber-500"><i class="fas fa-clock"></i></div>
+                                <div>
+                                    <h3 class="font-semibold text-chalk mb-1 text-sm">Opening Hours</h3>
+                                    <p class="text-sm text-fog/50 leading-relaxed">Mon - Fri: 9am - 8pm<br>Sat - Sun: 10am - 6pm</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="reveal-up" style="transition-delay: 0.1s">
+                        <form id="booking-form" class="bg-ink border border-chalk/5 p-8 lg:p-12 space-y-6" aria-label="Booking form">
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="first-name" class="form-label">First Name *</label>
+                                    <input type="text" id="first-name" name="first-name" required class="form-field" placeholder="Jane">
+                                </div>
+                                <div>
+                                    <label for="last-name" class="form-label">Last Name *</label>
+                                    <input type="text" id="last-name" name="last-name" required class="form-field" placeholder="Doe">
+                                </div>
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="phone" class="form-label">Phone *</label>
+                                    <input type="tel" id="phone" name="phone" required class="form-field" placeholder="(555) 000-0000">
+                                </div>
+                                <div>
+                                    <label for="email" class="form-label">Email *</label>
+                                    <input type="email" id="email" name="email" required class="form-field" placeholder="jane@example.com">
+                                </div>
+                            </div>
+                            <div>
+                                <label for="service" class="form-label">Service *</label>
+                                <div class="select-wrapper">
+                                    <select id="service" name="service" required class="form-field">
+                                        <option value="" disabled selected>Select a service</option>
+                                        <option value="hair">Hair Artistry</option>
+                                        <option value="nails">Nail Couture</option>
+                                        <option value="makeup">Makeup Studio</option>
+                                        <option value="bridal">Bridal Package</option>
+                                        <option value="consultation">Consultation</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="date" class="form-label">Date *</label>
+                                    <input type="date" id="date" name="date" required class="form-field">
+                                </div>
+                                <div>
+                                    <label for="time" class="form-label">Time *</label>
+                                    <input type="time" id="time" name="time" required class="form-field">
+                                </div>
+                            </div>
+                            <div>
+                                <label for="notes" class="form-label">Special Requests</label>
+                                <textarea id="notes" name="notes" rows="3" class="form-field resize-none" placeholder="Any allergies or preferences..."></textarea>
+                            </div>
+                            <button type="submit" id="submit-btn" class="w-full py-5 bg-amber-500 text-void font-bold uppercase tracking-[0.15em] text-xs hover:bg-chalk transition-colors duration-300">Confirm Booking</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-void border-t border-chalk/5 pt-20 pb-10" role="contentinfo">
+        <div class="max-w-[1400px] mx-auto px-6 lg:px-10">
+            <div class="grid md:grid-cols-2 lg:grid-cols-12 gap-12 mb-20">
+                <div class="lg:col-span-5">
+                    <div class="flex items-center gap-3 mb-8">
+                        <div class="w-9 h-9 border border-amber-500/30 flex items-center justify-center">
+                            <span class="font-serif text-amber-500 text-lg">G</span>
+                        </div>
+                        <div>
+                            <span class="font-serif text-xl text-chalk tracking-wide block leading-none">Glow</span>
+                            <span class="text-[9px] uppercase tracking-[0.3em] text-fog/60 block leading-none mt-1">Beauty Studio</span>
+                        </div>
+                    </div>
+                    <p class="text-fog/50 text-sm leading-relaxed max-w-sm mb-8">Elevating beauty through artistry and care. Join us in our mission to make everyone feel as beautiful as they truly are.</p>
+                    <div class="flex gap-3">
+                        <a href="#" class="w-10 h-10 border border-chalk/10 flex items-center justify-center text-fog/50 hover:text-amber-500 hover:border-amber-500/20 transition-all" aria-label="Instagram"><i class="fab fa-instagram text-sm"></i></a>
+                        <a href="#" class="w-10 h-10 border border-chalk/10 flex items-center justify-center text-fog/50 hover:text-amber-500 hover:border-amber-500/20 transition-all" aria-label="Facebook"><i class="fab fa-facebook-f text-sm"></i></a>
+                        <a href="#" class="w-10 h-10 border border-chalk/10 flex items-center justify-center text-fog/50 hover:text-amber-500 hover:border-amber-500/20 transition-all" aria-label="Pinterest"><i class="fab fa-pinterest-p text-sm"></i></a>
+                    </div>
+                </div>
+                <div class="lg:col-span-2 lg:col-start-7">
+                    <h3 class="text-xs uppercase tracking-[0.2em] text-fog/50 mb-6 font-semibold">Explore</h3>
+                    <ul class="space-y-4">
+                        <li><a href="#home" class="text-sm text-fog/60 hover:text-amber-500 transition-colors">Home</a></li>
+                        <li><a href="#services" class="text-sm text-fog/60 hover:text-amber-500 transition-colors">Services</a></li>
+                        <li><a href="#gallery" class="text-sm text-fog/60 hover:text-amber-500 transition-colors">Gallery</a></li>
+                        <li><a href="#booking" class="text-sm text-fog/60 hover:text-amber-500 transition-colors">Book Now</a></li>
+                    </ul>
+                </div>
+                <div class="lg:col-span-2">
+                    <h3 class="text-xs uppercase tracking-[0.2em] text-fog/50 mb-6 font-semibold">Services</h3>
+                    <ul class="space-y-4">
+                        <li><a href="#services" class="text-sm text-fog/60 hover:text-amber-500 transition-colors">Hair Artistry</a></li>
+                        <li><a href="#services" class="text-sm text-fog/60 hover:text-amber-500 transition-colors">Nail Couture</a></li>
+                        <li><a href="#services" class="text-sm text-fog/60 hover:text-amber-500 transition-colors">Makeup Studio</a></li>
+                        <li><a href="#services" class="text-sm text-fog/60 hover:text-amber-500 transition-colors">Bridal</a></li>
+                    </ul>
+                </div>
+                <div class="lg:col-span-2">
+                    <h3 class="text-xs uppercase tracking-[0.2em] text-fog/50 mb-6 font-semibold">Contact</h3>
+                    <ul class="space-y-4 text-sm text-fog/60">
+                        <li class="flex items-start gap-3"><i class="fas fa-map-marker-alt mt-1 text-amber-500/50 text-xs"></i><span>123 Elegance Ave<br>New York, NY 10012</span></li>
+                        <li class="flex items-center gap-3"><i class="fas fa-phone-alt text-amber-500/50 text-xs"></i><span>(555) 123-4567</span></li>
+                        <li class="flex items-center gap-3"><i class="fas fa-envelope text-amber-500/50 text-xs"></i><span>hello@glowbeauty.com</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="pt-10 border-t border-chalk/5 flex flex-col md:flex-row justify-between items-center gap-4 text-fog/40 text-[11px] uppercase tracking-widest">
+                <p> Glow Beauty Studio. All Rights Reserved.</p>
+                <p>Designed with Passion</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Register GSAP
+        gsap.registerPlugin(ScrollTrigger);
+
+        // ===== NUMBER COUNTER ANIMATION =====
+        function animateCounter(element) {
+            const target = parseInt(element.getAttribute('data-target'));
+            const suffix = element.getAttribute('data-suffix') || '';
+            const prefix = element.getAttribute('data-prefix') || '';
+            const duration = 2000; // 2 seconds
+            const startTime = performance.now();
+
+            // Format number with commas for thousands
+            function formatNumber(num) {
+                if (num >= 1000) {
+                    return (num / 1000).toFixed(0) + 'k';
+                }
+                return num.toString();
+            }
+
+            function updateCounter(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+
+                // Easing function: easeOutExpo for dramatic slowdown at end
+                const easeOutExpo = 1 - Math.pow(2, -10 * progress);
+
+                const currentValue = Math.floor(easeOutExpo * target);
+
+                // Format the display value
+                let displayValue;
+                if (target >= 1000) {
+                    // For 5000, show as 5k
+                    displayValue = formatNumber(currentValue);
+                } else {
+                    displayValue = currentValue.toString();
+                }
+
+                element.textContent = prefix + displayValue + suffix;
+
+                if (progress < 1) {
+                    requestAnimationFrame(updateCounter);
+                } else {
+                    // Ensure final value is exact
+                    element.textContent = prefix + formatNumber(target) + suffix;
+                }
+            }
+
+            requestAnimationFrame(updateCounter);
+        }
+
+        // ===== LOADER =====
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.querySelector('.loader').classList.add('done');
+                initHeroAnims();
+
+                // Start counter animations after hero animations begin
+                setTimeout(() => {
+                    document.querySelectorAll('.counter').forEach(counter => {
+                        animateCounter(counter);
+                    });
+                }, 800);
+            }, 1200);
+        });
+
+        // ===== HERO ANIMATIONS =====
+        function initHeroAnims() {
+            const tl = gsap.timeline();
+            tl.from('#hero-label', { opacity: 0, x: -20, duration: 0.8, ease: 'power3.out' })
+              .from('#hero-title', { opacity: 0, y: 60, duration: 1, ease: 'power3.out' }, '-=0.5')
+              .from('#hero-desc', { opacity: 0, y: 30, duration: 0.8, ease: 'power3.out' }, '-=0.6')
+              .from('#hero-cta', { opacity: 0, y: 20, duration: 0.6, ease: 'power3.out' }, '-=0.4')
+              .from('#hero-meta', { opacity: 0, y: 20, duration: 0.6, ease: 'power3.out' }, '-=0.3')
+              .from('#hero-img', { scale: 1.1, duration: 1.5, ease: 'power2.out' }, 0);
+        }
+
+        // ===== NAV SCROLL =====
+        const navbar = document.getElementById('navbar');
+        let lastScrollY = 0;
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.scrollY;
+            if (currentScroll > 100) {
+                navbar.classList.add('scrolled');
+                navbar.classList.toggle('hidden-nav', currentScroll > lastScrollY && currentScroll > 300);
+            } else {
+                navbar.classList.remove('scrolled', 'hidden-nav');
+            }
+            lastScrollY = currentScroll;
+        });
+
+        // ===== MOBILE MENU =====
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+        let menuOpen = false;
+
+        function toggleMenu() {
+            menuOpen = !menuOpen;
+            menuBtn.setAttribute('aria-expanded', menuOpen);
+            menuBtn.classList.toggle('active');
+            mobileMenu.classList.toggle('open');
+            document.body.style.overflow = menuOpen ? 'hidden' : '';
+        }
+        menuBtn.addEventListener('click', toggleMenu);
+        mobileLinks.forEach(l => l.addEventListener('click', toggleMenu));
+
+        // ===== CUSTOM CURSOR =====
+        const cursor = document.getElementById('cursor');
+        if (cursor && window.matchMedia('(pointer: fine)').matches) {
+            let mx = 0, my = 0, cx = 0, cy = 0;
+            document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+            function loopCursor() {
+                cx += (mx - cx) * 0.15; cy += (my - cy) * 0.15;
+                cursor.style.left = cx + 'px'; cursor.style.top = cy + 'px';
+                requestAnimationFrame(loopCursor);
+            }
+            loopCursor();
+            document.querySelectorAll('a, button, .service-card, .gallery-cell').forEach(el => {
+                el.addEventListener('mouseenter', () => cursor.classList.add('expanded'));
+                el.addEventListener('mouseleave', () => cursor.classList.remove('expanded'));
+            });
+        }
+
+        // ===== REVEAL ON SCROLL =====
+        const revealEls = document.querySelectorAll('.reveal-up');
+        const revealObs = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    revealObs.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+        revealEls.forEach(el => revealObs.observe(el));
+
+        // ===== TESTIMONIALS =====
+        const tSlides = document.querySelectorAll('.testimonial-slide');
+        const tDots = document.querySelectorAll('.testimonial-dot');
+        let tCurrent = 0, tInterval;
+
+        function showT(index) {
+            tSlides.forEach((s, i) => {
+                s.style.opacity = i === index ? '1' : '0';
+                s.style.transform = i === index ? 'translateX(0)' : (i < index ? 'translateX(-100%)' : 'translateX(100%)');
+            });
+            tDots.forEach((d, i) => {
+                d.classList.toggle('bg-amber-500', i === index);
+                d.classList.toggle('bg-chalk/10', i !== index);
+                d.setAttribute('aria-selected', i === index);
+            });
+            tCurrent = index;
+        }
+        function nextT() { showT((tCurrent + 1) % tSlides.length); }
+        tInterval = setInterval(nextT, 6000);
+        tDots.forEach((d, i) => d.addEventListener('click', () => {
+            clearInterval(tInterval); showT(i); tInterval = setInterval(nextT, 6000);
+        }));
+
+        // ===== BOOKING FORM =====
+        const form = document.getElementById('booking-form');
+        const submitBtn = document.getElementById('submit-btn');
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const orig = submitBtn.innerText;
+            submitBtn.innerText = 'Booking Confirmed!';
+            submitBtn.style.background = '#22c55e';
+            setTimeout(() => { submitBtn.innerText = orig; submitBtn.style.background = ''; form.reset(); }, 3000);
+        });
+
+        // ===== SMOOTH SCROLL =====
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', function(e) {
+                e.preventDefault();
+                const t = document.querySelector(this.getAttribute('href'));
+                if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+    </script>
+</body>
+</html>
